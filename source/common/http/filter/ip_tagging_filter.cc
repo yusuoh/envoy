@@ -9,7 +9,11 @@ IpTaggingFilter::~IpTaggingFilter() {}
 
 void IpTaggingFilter::onDestroy() {}
 
-FilterHeadersStatus IpTaggingFilter::decodeHeaders(HeaderMap&, bool) {
+FilterHeadersStatus IpTaggingFilter::decodeHeaders(HeaderMap& headers, bool) {
+  // fixme add internalvs external check
+  // add trie
+  std::string val{"test"};
+  headers.insertEnvoyIpTags().value(val);
   return FilterHeadersStatus::Continue;
 }
 

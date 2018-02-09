@@ -61,10 +61,10 @@ envoy_cc_test(
         "//source/common/buffer:buffer_lib",
         "//source/common/http:header_map_lib",
         "//source/common/http:headers_lib",
-        "//source/common/http/filter:fault_filter_lib",
         "//source/common/http/filter:ip_tagging_filter_lib",
         "//test/mocks/http:http_mocks",
-        "//test/mocks/upstream:upstream_mocks",
+        "//test/mocks/local_info:local_info_mocks",
+        "//test/mocks/runtime:runtime_mocks",
         "//test/test_common:utility_lib",
     ],
 )

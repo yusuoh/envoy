@@ -11,10 +11,36 @@ namespace Envoy {
 namespace Server {
 namespace Configuration {
 
-HttpFilterFactoryCb IpTaggingFilterConfig::createFilterFactory(const Json::Object& json_config,
+HttpFilterFactoryCb createFilterFactoryFromProto(const Protobuf::Message& proto_config,
+                                                 const std::string& stats_prefix,
+                                                 FactoryContext& context) override;
+
+HttpFilterFactoryCb IpTaggingFilterConfig::createFilterFactory(const Json::Object&,
                                                                const std::string&,
-                                                               FactoryContext&) {
-  Http::IpTaggingFilterConfigSharedPtr config(new Http::IpTaggingFilterConfig(json_config));
+                                                               FactoryContext& context) {
+
+  // FIXME return an error - not supproted in v1
+  // if v1 is supported move this logic to a helper method
+  envoy::config::filter::http::ip_tagging::v2::IPTagging proto_config;
+  Http::IpTaggingFilterConfigSharedPtr config(new Http::IpTaggingFilterConfig(
+      proto_config, context.localInfo(), context.scope(), context.runtime()));
+  return [config](Http::FilterChainFactoryCallbacks& callbacks) -> void {
+    callbacks.addStreamDecoderFilter(
+        Http::StreamDecoderFilterSharedPtr{new Http::IpTaggingFilter(config)});
+  };
+}
+
+HttpFilterFactoryCb
+IpTaggingFilterConfig::createFilterFactoryFromProto(const Protobuf::Message& proto_config,
+                                                    const std::string&, FactoryContext& context) {
+  // Config::FilterJson::translateHttpRateLimitFilter(json_config, proto_config);
+  // fixme what is local info for again? remote address?
+  // fixme where do i check if ip_tags is specified the content is appropriately
+  Http::IpTaggingFilterConfigSharedPtr config(new Http::IpTaggingFilterConfig(
+      MessageUtil::downcastAndValidate<
+          const envoy::config::filter::http::ip_tagging::v2::IPTagging&>(proto_config),
+      context.localInfo(), context.scope(), context.runtime()));
+  ));
   return [config](Http::FilterChainFactoryCallbacks& callbacks) -> void {
     callbacks.addStreamDecoderFilter(
         Http::StreamDecoderFilterSharedPtr{new Http::IpTaggingFilter(config)});

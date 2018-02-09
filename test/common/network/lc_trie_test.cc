@@ -41,6 +41,7 @@ public:
   std::unique_ptr<LcTrie> trie_;
 };
 
+// fixme add tests to make up for test gaps.
 // TODO(ccaraman): Add a performance and memory benchmark test.
 
 // Use the default constructor values.
