@@ -17,5 +17,5 @@ ADD . /app
 # ENV NAME World
 
 # Run app.py when the container launches
-CMD ["python", "hot-restarter.py", "./envoy"]
-# CMD ["bash"]
+# CMD ["python", "hot-restarter.py", "./envoy -c config.yaml"]
+CMD ["bash"]
